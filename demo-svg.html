@@ -1,0 +1,118 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>d3js-ztoy</title>
+<script src="d3.v3.min.js"></script>
+<style type="text/css">
+	
+</style>
+</head>
+<body>
+	
+</body>
+<script>
+// var drag = d3.behavior.drag()  
+//     .on("drag", dragmove);   
+                  
+// function dragmove(d) {    
+//     d3.select(this)  
+//       .attr("cx", d.cx = d3.event.x )  
+//       .attr("cy", d.cy = d3.event.y );  
+// }  
+
+var width = 800;
+var height = 500;
+var nodes = [ {name:"厦门象屿物流集团有限责任公司"}, {name:"昆山锦绣蓝湾置业有限公司"},
+			  { name: "福建南平太阳电缆股份有限公司" }, { name: "厦门象屿商业地产开发有限公司" },
+              { name: "厦门国际物流中心开发有限公司" }, { name: "厦门象屿股份有限公司" },
+              { name: "厦门象屿科技有限公司" } ];
+
+var edges = [ { source : 0 , target: 1 } , { source : 0 , target: 2 } ,
+           { source : 0 , target: 3 } , { source : 1 , target: 4 } ,
+           { source : 1 , target: 5 } , { source : 1 , target: 6 } ];
+
+var svg = d3.select("body")
+	.append("svg")
+	.attr("width",width)
+	.attr("height",height)
+	.style("border","1px solid #DDD")
+
+var force = d3.layout.force()
+	.nodes(nodes)		//指定节点数组
+	.links(edges)		//指定连线数组
+	.size([width,height])	//指定范围
+	.linkDistance(150)	//指定连线长度
+	// .linkStrength(0)	//指定连接线的坚硬度
+	.charge(-400)	//相互之间的作用力
+	// .gravity(0)  //设置重力
+force.start()
+
+var svg_edges = svg.selectAll("line")
+	.data(edges)
+	.enter()
+	.append("line")
+	.style("stroke","#CCC")
+	.style("stroke-width",1);
+
+var color = d3.scale.category20();
+
+var svg_nodes = svg.selectAll("circle")
+	.data(nodes)
+	.enter()
+	.append("circle")
+	.attr("r",35)
+	.attr("stroke","#006CA4")
+	.attr("stroke-width",2)
+	.style("fill","#2394CE")
+	.call(force.drag);
+
+var svg_texts = svg.selectAll("text")
+	.data(nodes)
+	.enter()
+	.append("text")
+var svg_tspans=svg_texts.selectAll("tspan")
+	.data(["随州","科技","有限公司"])
+	.enter()
+	.append("tspan")
+	.style("font-size","12px")
+	.text(function(d){
+		return d
+	})
+
+	// .style("fill","black")
+	// .attr("x",0)
+	// .attr("y",0)
+	// .style("fill","#666")
+	// .style("cursor","default")
+	// .style("-webkit-user-select","none")
+	// .style("font-size","12px")
+	// .style("width","150px")
+	// .text(function(d){
+	// 	return d.name
+	// })
+
+force.on("tick",function(){
+	//线条
+	svg_edges.attr("x1",function(d){ return d.source.x;})
+		.attr("y1",function(d){return d.source.y;})
+		.attr("x2",function(d){return d.target.x;})
+		.attr("y2",function(d){return d.target.y;});
+
+	//圆形
+	svg_nodes.attr("cx",function(d){return d.x;})
+		.attr("cy",function(d){return d.y;});
+
+	//字体
+	svg_texts.attr("x",function(d){return d.x-20;})
+		.attr("y",function(d){return d.y-10;});
+
+	//
+	// svg_texts.selectAll("tspan").attr("x",function(d,i){return d.x;})
+		// .attr("y",function(d,i){return d.y;});
+	// svg_tspans.attr("x",function(d){return 20;});
+	// 	.attr("y",function(d){return d.y;});
+})
+
+
+</script>
+</html>
